@@ -1,4 +1,4 @@
-Puppet::Type.newtype(:runner) do
+Puppet::Type.newtype(:gitlab_runner) do
 
   desc 'runner manages the Gitlab-ci multi-runner'
 

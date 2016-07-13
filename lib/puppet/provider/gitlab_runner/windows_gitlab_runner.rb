@@ -1,4 +1,4 @@
-Puppet::Type.type(:runner).provide(:runner) do
+Puppet::Type.type(:gitlab_runner).provide(:windows_gitlab_runner) do
   confine :osfamily => :windows
   commands :gitlab_runner => 'C:\\tmp\\gitlab-ci-multi-runner-windows-amd64.exe'
 
@@ -10,7 +10,7 @@ Puppet::Type.type(:runner).provide(:runner) do
           if verify_runner(runner[2]) == true
             if check_service == "not_installed"
               install_service()
-            end 
+            end
             return true
             break
           end
@@ -33,14 +33,14 @@ Puppet::Type.type(:runner).provide(:runner) do
       #Puppet.notice("Running command to create runner: #{cmd}")
       Open3.popen2(cmd) do |stdin, stderr,  wait_thr|
         return_value = wait_thr.value
-  
+
         if return_value.exitstatus > 0
           #Puppet.notice(return_value.exitstatus)
           #Puppet.notice(stderr.read)
           fail("Cannot create runner #{@resource[:name]}")
           break
         end
-        if check_service == "not_installed" 
+        if check_service == "not_installed"
           install_service()
         end
       end

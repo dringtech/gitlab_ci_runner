@@ -1,7 +1,7 @@
-Puppet::Type.type(:runner).provide(:runner) do
-  confine :osfamily => :redhat
-  defaultfor :osfamily => :redhat
-  commands :gitlab_runner => 'gitlab-runner'
+Puppet::Type.type(:gitlab_runner).provide(:linux_gitlab_runner) do
+  desc "Configure a Gitlab CI Runner"
+
+  commands :gitlab_runner => '/usr/bin/gitlab-runner'
 
   def exists?
     begin
@@ -10,7 +10,6 @@ Puppet::Type.type(:runner).provide(:runner) do
         if resource[:name] == runner[0]
           if verify_runner(runner[2]) == true
             return true
-            break
           end
         end
       end
@@ -34,8 +33,6 @@ Puppet::Type.type(:runner).provide(:runner) do
       Open3.popen2(cmd) do |stdin, stderr,  wait_thr|
         return_value = wait_thr.value
         if return_value.exitstatus > 0
-          #Puppet.notice(return_value.exitstatus)
-          #Puppet.notice(stderr.read)
           fail("Cannot create runner #{@resource[:name]}")
           break
         end
@@ -51,19 +48,16 @@ Puppet::Type.type(:runner).provide(:runner) do
   end
 
 
-  def unregister_runner(runner)
-    thetoken = nil
+  def unregister_runner(runner_to_unreg)
     runners = get_runners
-    runners.each do |runner_to_delete|
-      if runner == runner_to_delete[0]
-        runner_token = runner_to_delete[1]
-        runner_url = runner_to_delete[3]
-        cmd = "gitlab-runner unregister --url #{runner_url} --token #{runner_token}"
-        Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-          while line = stderr.gets
-            p "deleting: #{runner_token}"
-            p line
-          end
+    runners.select { |x| x[0] == runner_to_unreg }.each do |runner|
+      runner_token = runner[1]
+      runner_url = runner[3]
+      cmd = "gitlab-runner unregister --url #{runner_url} --token #{runner_token}"
+      Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+        while line = stderr.gets
+          p "deleting: #{runner_token}"
+          p line
         end
       end
     end
@@ -79,7 +73,6 @@ Puppet::Type.type(:runner).provide(:runner) do
           thetoken = x[5][12,8]#.tr("\e[;m",'')
           if thetoken.to_s == token.to_s
             return true
-            break
           else
             next
           end
@@ -94,9 +87,8 @@ Puppet::Type.type(:runner).provide(:runner) do
     cmd = "gitlab-runner list"
     Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
       while line = stderr.gets
-          x = line.split()
-          if x[0].to_s != /^Listing/
-          #p x
+        x = line.split()
+        if x[0].to_s != /^Listing/
           runner_name = x[0].tr("\e[;",'')
           runner_token = x[3].gsub(/Token\e\[0;m=/,'')
           runner_token_short = runner_token[0,8]
