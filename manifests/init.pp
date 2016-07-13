@@ -6,7 +6,6 @@ class gitlab_ci_runner (
   ){
 
     class { '::gitlab_ci_runner::install': } ->
-    class { '::gitlab_ci_runner::config': } ~>
     class { '::gitlab_ci_runner::service': } ->
     Class['::gitlab_ci_runner']
 }

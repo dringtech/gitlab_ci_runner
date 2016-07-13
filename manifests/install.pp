@@ -1,6 +1,6 @@
 # == Class: gitlab_ci_runner::install
 #
-class gitlab_ci_runner::install::linux {
+class gitlab_ci_runner::install {
 
   case $::kernel {
     'Linux':  { include ::gitlab_ci_runner::install::linux }
