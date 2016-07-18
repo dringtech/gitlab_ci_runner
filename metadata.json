@@ -1,12 +1,12 @@
 {
-  "name": "bazzie-gitlab_ci_runner",
-  "version": "0.1.1",
-  "author": "bazzie",
+  "name": "dringtech-gitlab_ci_runner",
+  "version": "0.1.0",
+  "author": "dringtech",
   "summary": "Manages install and config of the Gitlab CI runner",
   "license": "Apache-2.0",
-  "source": "git://github.com/bazzie/gitlab_ci_runner.git",
-  "project_page": "https://github.com/bazzie/gitlab_ci_runner",
-  "issues_url": "https://github.com/bazzie/gitlab_ci_runner/issues",
+  "source": "git://github.com/dringtech/gitlab_ci_runner.git",
+  "project_page": "https://github.com/dringtech/gitlab_ci_runner",
+  "issues_url": "https://github.com/dringtech/gitlab_ci_runner/issues",
   "requirements": [
     {
       "name": "pe",
